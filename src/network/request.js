@@ -4,8 +4,8 @@ export function request(config) {
   //1.创建axios的实例
   const instance = axios.create({
     //免费的接口
-    // baseURL:'http://123.207.32.32:8000',
-    // baseURL = "http://123.207.32.32:8000/api/vip",
+    // baseURL:'http://123.207.32.32:8000/detail/1m70y5k',
+    // baseURL : "http://123.207.32.32:8000/api/vip/detail/1m70y5k",
     baseURL: "http://106.54.54.237:8000/api/v1",
     timeout:5000
   })
