@@ -40,10 +40,11 @@ import NavBar from "components/common/navbar/NavBar";
 import TabControl from "components/content/tabControl/TabControl";
 import GoodsList from "components/content/goods/GoodsList";
 import Scroll from "components/common/scroll/Scroll";
-import BackTop from "components/content/backTop/BackTop";
 
 import { getHmoeMultidata, getHomeGoods } from "network/home";
 import { debounce } from "common/utils";
+import {itemListenerMixin, backTopMixin} from 'common/mixin'
+
 
 export default {
   name: "Home",
@@ -55,8 +56,8 @@ export default {
     TabControl,
     GoodsList,
     Scroll,
-    BackTop
   },
+  mixins: [itemListenerMixin, backTopMixin],
   data() {
     return {
       banners: [],
@@ -67,10 +68,9 @@ export default {
         sell: { page: 0, list: [] }
       },
       currentType: "pop",
-      isShowBackTop: false,
       tabOffsetTop: 0,
       isTabFixed: false,
-      saveY: 0
+      saveY: 0,
     };
   },
   computed: {
@@ -89,11 +89,13 @@ export default {
   },
   mounted() {
     //1.图片加载完成的事件监听
-    const refresh = debounce(this.$refs.scroll.refresh, 200);
+    // const refresh = debounce(this.$refs.scroll.refresh, 200);
     //3.监听item中的图片加载完成
-    this.$bus.$on("itemImageLoad", () => {
-      refresh();
-    });
+    //对监听的事件进行保存
+    // this.ItemImgListener = () => {
+    //   refresh();
+    // };
+    // this.$bus.$on("itemImageLoad", this.ItemImgListener);
 
     //2.获取tabControl的offsetTop
     //所有的组件都有一个属性$el：用于获取组件中的元素
@@ -103,7 +105,11 @@ export default {
     this.$refs.scroll.refresh()
   },
   deactivated() {
+    //1.保存Y值
     this.saveY = this.$refs.scroll.getScrollY()
+
+    //2.取消全局事件监听
+    this.$bus.$off('itemImageLoad',this.ItemImgListener)
   },
   methods: {
     /**
@@ -124,9 +130,6 @@ export default {
       }
       this.$refs.tabControl1.currentIndex = index;
       this.$refs.tabControl2.currentIndex = index;
-    },
-    backClick() {
-      this.$refs.scroll.scrollTo(0, 0);
     },
     contentScroll(position) {
       //1.判断BackTop是否显示
