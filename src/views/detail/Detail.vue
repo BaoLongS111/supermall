@@ -38,6 +38,8 @@ import {
 import { debounce } from "common/utils";
 import { itemListenerMixin, backTopMixin } from "common/mixin";
 
+import { mapActions } from 'vuex'
+
 export default {
   name: "Detail",
   components: {
@@ -118,6 +120,7 @@ export default {
   },
   mounted() {},
   methods: {
+    ...mapActions(['addCart']),
     imageLoad() {
       // console.log("imgaeLoad");
       this.$refs.scroll.refresh();
@@ -188,7 +191,18 @@ export default {
       //2.将商品加到购物车里
       // this.$store.cartList.push(product);
       // this.$store.commit('addCart', product);
-      this.$store.dispatch('addCart', product);
+
+      this.addCart(product).then(res => {
+        // console.log(res)
+
+      this.$toast.show(res,2000);
+      })
+
+      // this.$store.dispatch('addCart', product).then(res => {
+      //   console.log(res)
+      // });
+
+
     }
   },
   updated() {
